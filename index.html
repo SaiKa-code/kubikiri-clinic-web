@@ -4,316 +4,359 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>クビを回避せよ！！ ～病院受付シミュレーション～ | SaiKa工房</title>
-<meta name="description" content="理不尽なほど忙しい病院受付を捌き、クビを回避せよ。受付・カルテ・会計のマルチタスクに、投資・カジノ・複数エンディングを詰め込んだ高難易度シミュレーション。">
+<meta name="description" content="理不尽なほど忙しい病院受付を捌き、クビを回避せよ。受付・カルテ探索・3点照合・会計のマルチタスクに、投資・カジノ・分岐エンディングを詰め込んだ高難易度シミュレーション。">
 
 <!-- OGP -->
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="SaiKa工房">
 <meta property="og:title" content="クビを回避せよ！！ ～病院受付シミュレーション～">
 <meta property="og:description" content="次々に来院する患者を捌け。ミスは許されない。クビを回避せよ。">
-<meta property="og:image" content="assets/hero.png">
+<meta property="og:image" content="assets/img/og.webp">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#e8e1d1">
 
 <link rel="icon" href="assets/favicon.ico">
-<style>
-  :root{
-    --bg:#0a0f1a;
-    --bg2:#0e1626;
-    --panel:#121c30;
-    --panel-line:#1e2c45;
-    --teal:#00d4aa;
-    --teal-d:#0a7d6b;
-    --text:#e8eef7;
-    --muted:#9fb0c8;
-    --danger:#ff5470;
-    --gold:#ffcb45;
-    --maxw:1120px;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{
-    font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",YuGothic,"Noto Sans JP",Meiryo,sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    line-height:1.7;
-    -webkit-font-smoothing:antialiased;
-    overflow-x:hidden;
-  }
-  a{color:inherit;text-decoration:none}
-  img{max-width:100%;display:block}
-  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
-  .accent{color:var(--teal)}
-
-  /* ===== Header ===== */
-  header{
-    position:fixed;top:0;left:0;right:0;z-index:50;
-    backdrop-filter:blur(10px);
-    background:rgba(10,15,26,.72);
-    border-bottom:1px solid var(--panel-line);
-  }
-  .nav{display:flex;align-items:center;justify-content:space-between;height:60px}
-  .brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.02em}
-  .brand .cross{
-    width:22px;height:22px;position:relative;flex:0 0 auto;
-  }
-  .brand .cross::before,.brand .cross::after{
-    content:"";position:absolute;background:var(--teal);border-radius:2px;
-  }
-  .brand .cross::before{left:8px;top:0;width:6px;height:22px}
-  .brand .cross::after{top:8px;left:0;height:6px;width:22px}
-  .nav-links{display:flex;gap:26px;font-size:14px;color:var(--muted)}
-  .nav-links a:hover{color:var(--text)}
-  .nav-cta{
-    background:var(--teal);color:#04121a;font-weight:700;font-size:13px;
-    padding:8px 16px;border-radius:8px;transition:.2s;
-  }
-  .nav-cta:hover{background:#28e6be;transform:translateY(-1px)}
-  @media(max-width:720px){.nav-links{display:none}}
-
-  /* ===== Hero ===== */
-  .hero{
-    position:relative;min-height:100vh;display:flex;align-items:center;
-    padding-top:60px;overflow:hidden;
-  }
-  .hero-bg{
-    position:absolute;inset:0;
-    background:url("assets/hero.png") center/cover no-repeat;
-    filter:brightness(.42) saturate(.9);
-    transform:scale(1.05);
-  }
-  .hero-bg::after{
-    content:"";position:absolute;inset:0;
-    background:
-      radial-gradient(120% 80% at 20% 30%,rgba(0,212,170,.14),transparent 60%),
-      linear-gradient(180deg,rgba(10,15,26,.55),rgba(10,15,26,.92));
-  }
-  .hero-inner{position:relative;z-index:2;padding:80px 0}
-  .badge{
-    display:inline-flex;align-items:center;gap:8px;
-    border:1px solid var(--panel-line);background:rgba(18,28,48,.7);
-    padding:6px 14px;border-radius:999px;font-size:12.5px;color:var(--muted);
-    margin-bottom:22px;
-  }
-  .badge .dot{width:8px;height:8px;border-radius:50%;background:var(--danger);box-shadow:0 0 10px var(--danger)}
-  .hero h1{
-    font-size:clamp(32px,6vw,60px);line-height:1.18;font-weight:800;
-    letter-spacing:.01em;margin-bottom:8px;
-  }
-  .hero h1 .sub{display:block;font-size:clamp(15px,2.4vw,22px);color:var(--muted);font-weight:600;margin-top:14px}
-  .hero p.lead{
-    max-width:620px;color:#cdd8ea;font-size:clamp(15px,1.7vw,18px);margin:22px 0 34px;
-  }
-  .cta-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
-  .btn{
-    display:inline-flex;align-items:center;gap:10px;font-weight:700;
-    padding:14px 26px;border-radius:10px;transition:.2s;font-size:15px;
-  }
-  .btn-steam{
-    background:linear-gradient(135deg,#1b2838,#2a475e);
-    color:#fff;border:1px solid #3d6c8f;
-  }
-  .btn-steam:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(42,71,94,.5)}
-  .btn-ghost{border:1px solid var(--panel-line);color:var(--text)}
-  .btn-ghost:hover{border-color:var(--teal);color:var(--teal)}
-  .coming{font-size:12px;color:var(--muted);margin-left:2px}
-
-  /* ===== Sections ===== */
-  section.block{padding:96px 0;position:relative}
-  .eyebrow{color:var(--teal);font-weight:700;font-size:13px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:14px}
-  h2.title{font-size:clamp(26px,4vw,38px);font-weight:800;line-height:1.3;margin-bottom:18px}
-  .section-lead{color:var(--muted);max-width:640px;margin-bottom:52px}
-
-  /* ===== Features ===== */
-  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-  @media(max-width:900px){.grid{grid-template-columns:1fr 1fr}}
-  @media(max-width:600px){.grid{grid-template-columns:1fr}}
-  .card{
-    background:linear-gradient(180deg,var(--panel),var(--bg2));
-    border:1px solid var(--panel-line);border-radius:16px;padding:26px;
-    transition:.25s;position:relative;overflow:hidden;
-  }
-  .card:hover{transform:translateY(-4px);border-color:var(--teal-d)}
-  .card .ico{
-    width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;
-    background:rgba(0,212,170,.12);border:1px solid rgba(0,212,170,.3);
-    font-size:22px;margin-bottom:16px;
-  }
-  .card h3{font-size:18px;margin-bottom:8px}
-  .card p{color:var(--muted);font-size:14.5px}
-
-  /* ===== Loop / flow ===== */
-  .flow{display:flex;flex-wrap:wrap;gap:12px;counter-reset:step}
-  .flow .step{
-    flex:1 1 140px;background:var(--panel);border:1px solid var(--panel-line);
-    border-radius:12px;padding:18px 16px;position:relative;
-  }
-  .flow .step .n{color:var(--teal);font-weight:800;font-size:13px;letter-spacing:.1em}
-  .flow .step h4{font-size:15px;margin-top:6px}
-  .flow .step p{color:var(--muted);font-size:13px;margin-top:4px}
-
-  /* ===== Stats ===== */
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:8px}
-  @media(max-width:700px){.stats{grid-template-columns:1fr 1fr}}
-  .stat{background:var(--panel);border:1px solid var(--panel-line);border-radius:14px;padding:24px;text-align:center}
-  .stat .num{font-size:clamp(28px,5vw,40px);font-weight:800;color:var(--teal);line-height:1}
-  .stat .lbl{color:var(--muted);font-size:13px;margin-top:8px}
-
-  /* ===== Screenshots placeholder ===== */
-  .shots{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-  @media(max-width:800px){.shots{grid-template-columns:1fr 1fr}}
-  @media(max-width:520px){.shots{grid-template-columns:1fr}}
-  .shot{
-    aspect-ratio:16/10;border-radius:12px;border:1px dashed var(--panel-line);
-    background:
-      repeating-linear-gradient(45deg,rgba(255,255,255,.02) 0 10px,transparent 10px 20px),
-      var(--panel);
-    display:flex;align-items:center;justify-content:center;color:var(--muted);
-    font-size:13px;text-align:center;padding:12px;
-  }
-
-  /* ===== Final CTA ===== */
-  .final{
-    text-align:center;
-    background:
-      radial-gradient(80% 120% at 50% 0%,rgba(0,212,170,.12),transparent 60%),
-      var(--bg2);
-    border-top:1px solid var(--panel-line);
-    border-bottom:1px solid var(--panel-line);
-  }
-  .final h2{margin-bottom:16px}
-  .final .cta-row{justify-content:center}
-
-  /* ===== Footer ===== */
-  footer{padding:44px 0;color:var(--muted);font-size:13px}
-  .foot{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center}
-  .foot a:hover{color:var(--teal)}
-
-  .reveal{opacity:0;transform:translateY(24px);transition:.7s cubic-bezier(.2,.7,.2,1)}
-  .reveal.in{opacity:1;transform:none}
-</style>
+<link rel="preload" as="image" href="assets/img/logo.webp">
+<link rel="stylesheet" href="assets/css/site.css">
 </head>
 <body>
 
-<header>
+<!-- クビのリスクゲージ（スクロール連動） -->
+<div class="risk-bar" aria-hidden="true"><span class="risk-fill"></span></div>
+
+<header id="top">
   <div class="wrap nav">
-    <div class="brand"><span class="cross"></span> 首切クリニック</div>
+    <a class="brand" href="#top">
+      <img class="brand-icon" src="assets/img/icon.webp" alt="" width="26" height="26">
+      <span class="brand-txt">首切クリニック<small>受付課</small></span>
+    </a>
     <nav class="nav-links">
-      <a href="#features">特徴</a>
-      <a href="#flow">ゲームの流れ</a>
+      <a href="#pv">PV</a>
+      <a href="#chart">症状</a>
+      <a href="#flow">業務フロー</a>
+      <a href="#demo">受付体験</a>
       <a href="#depth">やり込み</a>
-      <a href="#shots">スクリーンショット</a>
+      <a href="#records">実績</a>
     </nav>
     <a class="nav-cta" href="#buy">Steamで見る</a>
   </div>
 </header>
 
-<!-- HERO -->
+<!-- ===== HERO ===== -->
 <section class="hero">
-  <div class="hero-bg"></div>
+  <div class="hero-photo" aria-hidden="true"></div>
+  <div class="hero-veil" aria-hidden="true"></div>
+
+  <!-- 終わらない行列 -->
+  <div class="queue" aria-hidden="true">
+    <div class="queue-track" id="queueTrack"></div>
+  </div>
+
   <div class="wrap hero-inner">
-    <span class="badge"><span class="dot"></span> 高難易度・お仕事シミュレーション</span>
-    <h1>
-      クビを回避せよ！！
-      <span class="sub">～ 病院受付シミュレーション ～</span>
+    <p class="badge"><span class="dot"></span> 高難易度・お仕事シミュレーション</p>
+    <h1 class="hero-logo">
+      <img src="assets/img/logo.webp" alt="クビを回避せよ！！" width="911" height="540" fetchpriority="high">
+      <span class="visually-hidden">クビを回避せよ！！ ～病院受付シミュレーション～</span>
     </h1>
+    <p class="hero-sub">～ 病院受付シミュレーション ～</p>
     <p class="lead">
-      理不尽なほど忙しい病院の受付スタッフ。押し寄せる患者、保険証の確認、カルテ探し、会計処理——
-      ミスは許されない。この<span class="accent">ブラック職場</span>を捌ききり、<strong>クビを回避せよ。</strong>
+      押し寄せる患者。保険証の確認、カルテ探し、処方箋の照合、会計処理——
+      待たせればクレーム、間違えれば減点。この<b class="ink-red">ブラック職場</b>を捌ききり、<b>クビを回避せよ。</b>
     </p>
     <div class="cta-row">
-      <a class="btn btn-steam" href="#buy">
-        ▶ Steamストアページ <span class="coming">（近日公開）</span>
+      <a class="btn btn-stamp" href="https://store.steampowered.com/app/4334400/" target="_blank" rel="noopener">
+        Steamストアページ
       </a>
-      <a class="btn btn-ghost" href="#features">ゲームを見る</a>
+      <a class="btn btn-outline" href="#demo">受付を体験する</a>
     </div>
+    <p class="hero-note">受付カウンターの向こうには、まだ <span id="queueCount">32</span> 人。</p>
   </div>
+
+  <div class="counter-edge" aria-hidden="true"></div>
 </section>
 
-<!-- FEATURES -->
-<section class="block" id="features">
+<!-- ===== PV ===== -->
+<section class="block band" id="pv">
   <div class="wrap">
-    <div class="eyebrow reveal">Features</div>
-    <h2 class="title reveal">神経をすり減らす、<span class="accent">マルチタスク</span>の極致</h2>
-    <p class="section-lead reveal">
-      受付・入力・カルテ探索・監査・会計。すべてを同時進行で、正確に、そして速く。
-      待たせればクレーム、間違えれば減点。あなたの処理能力が試される。
+    <p class="eyebrow">Movie</p>
+    <h2 class="title">まずは<span class="ink-red">現場</span>を見てください</h2>
+    <p class="section-lead">受付カウンターで実際に何が起きるのか。ゲーム本編のプロモーション映像です。</p>
+
+    <div class="pv-frame reveal">
+      <iframe
+        src="https://www.youtube-nocookie.com/embed/HLSXHTMJn_A?rel=0"
+        title="『クビを回避せよ！！ ～病院受付シミュレーション～』プロモーション映像"
+        loading="lazy" referrerpolicy="strict-origin-when-cross-origin"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen></iframe>
+    </div>
+    <p class="pv-note">
+      再生できない場合は <a href="https://youtu.be/HLSXHTMJn_A" target="_blank" rel="noopener">YouTubeで直接見る</a>。
     </p>
-    <div class="grid">
-      <div class="card reveal"><div class="ico">🩺</div><h3>怒涛の患者ラッシュ</h3><p>新規・再診が次々と来院し、待合室に列を作る。マイナ保険証は一瞬、紙保険証は手入力。判断と処理の速さが命。</p></div>
-      <div class="card reveal"><div class="ico">🗂️</div><h3>カルテ探索</h3><p>膨大な棚から患者IDのバインダーを探し出せ。社保・国保・後期高齢者——分類を見極め、正しい一冊を取り出す。</p></div>
-      <div class="card reveal"><div class="ico">🔍</div><h3>監査・3点照合</h3><p>カルテ・処方箋・保険証を突き合わせ、処方ミスを見抜く。確認できたら押印。見落としは許されない。</p></div>
-      <div class="card reveal"><div class="ico">💴</div><h3>会計＆次回予約</h3><p>請求額をテンキーで入力。既往歴に応じて次回予約を設定。全部正しければ患者は退店、スコア加算。</p></div>
-      <div class="card reveal"><div class="ico">🏆</div><h3>S〜Fランク評価</h3><p>1日の働きをスコア化し6段階で評価。Sランクは金色の豪華演出。ハイスコアとニューレコードを狙え。</p></div>
-      <div class="card reveal"><div class="ico">⚠️</div><h3>クビのリスク</h3><p>患者を満足させられなければ評価は下がり続ける。設備投資で満足度を上げろ——ただし“ニセDX”の罠に注意。</p></div>
+  </div>
+</section>
+
+<!-- ===== 症状（特徴） ===== -->
+<section class="block" id="chart">
+  <div class="wrap">
+    <div class="sheet">
+      <div class="sheet-head">
+        <div>
+          <p class="sheet-kind">診 療 録 ／ MEDICAL RECORD</p>
+          <h2 class="title">主訴：<span class="ink-red">マルチタスクの限界</span></h2>
+        </div>
+        <p class="sheet-id">No. 4334400</p>
+      </div>
+      <p class="section-lead">
+        受付・入力・カルテ探索・監査・会計。すべてを同時進行で、正確に、そして速く。
+        以下の症状に、心当たりのある方へ。
+      </p>
+
+      <ul class="checks">
+        <li class="reveal"><h3>怒涛の患者ラッシュ</h3><p>新規・再診が次々と来院し、待合室に列を作る。マイナ保険証は一瞬、紙の保険証は手入力。判断と処理の速さが命。</p></li>
+        <li class="reveal"><h3>カルテ探索</h3><p>膨大な棚から患者IDのバインダーを探し出せ。社保・国保・後期高齢者——分類を見極め、正しい一冊を抜き取る。</p></li>
+        <li class="reveal"><h3>監査・3点照合</h3><p>カルテ・処方箋・保険証を突き合わせ、処方ミスを見抜く。確認できたら押印。見落としは許されない。</p></li>
+        <li class="reveal"><h3>会計＆次回予約</h3><p>請求額をテンキーで入力。既往歴に応じて次回予約を設定。すべて正しければ患者は退店、スコア加算。</p></li>
+        <li class="reveal"><h3>S〜Fランク評価</h3><p>1日の働きをスコア化して6段階で評定。Sランクは金色の豪華演出。ハイスコアとニューレコードを狙え。</p></li>
+        <li class="reveal"><h3>クビのリスク</h3><p>患者を満足させられなければ、リスクは上がり続ける。設備投資で満足度を上げろ——ただし“ニセDX”の罠に注意。</p></li>
+      </ul>
+
+      <p class="stamp-line reveal"><span class="stamp stamp-red">要 経 過 観 察</span></p>
     </div>
   </div>
 </section>
 
-<!-- FLOW -->
-<section class="block" id="flow" style="background:var(--bg2);border-top:1px solid var(--panel-line);border-bottom:1px solid var(--panel-line)">
+<!-- ===== 業務フロー ===== -->
+<section class="block band" id="flow">
   <div class="wrap">
-    <div class="eyebrow reveal">Game Loop</div>
-    <h2 class="title reveal">1人の患者を、<span class="accent">最後まで</span>捌ききれ</h2>
-    <p class="section-lead reveal">受付から会計まで、途切れない業務フロー。1つ詰まれば全部が渋滞する。</p>
-    <div class="flow">
-      <div class="step reveal"><div class="n">STEP 01</div><h4>受付</h4><p>来院受付・保険証確認</p></div>
-      <div class="step reveal"><div class="n">STEP 02</div><h4>情報入力</h4><p>紙保険証を手動入力</p></div>
-      <div class="step reveal"><div class="n">STEP 03</div><h4>カルテ探索</h4><p>棚から該当カルテを発見</p></div>
-      <div class="step reveal"><div class="n">STEP 04</div><h4>監査</h4><p>3点照合・処方チェック・押印</p></div>
-      <div class="step reveal"><div class="n">STEP 05</div><h4>会計</h4><p>金額計算・次回予約・退店</p></div>
+    <p class="eyebrow">Game Loop</p>
+    <h2 class="title">1人の患者を、<span class="ink-red">最後まで</span>捌ききれ</h2>
+    <p class="section-lead">受付から会計まで、途切れない一本のライン。1工程が詰まれば、全部が渋滞する。</p>
+
+    <div class="pipeline" id="pipeline">
+      <ol class="stations">
+        <li><span class="n">01</span><h4>受付</h4><p>来院受付・保険証確認</p></li>
+        <li><span class="n">02</span><h4>情報入力</h4><p>紙の保険証を手入力</p></li>
+        <li><span class="n">03</span><h4>カルテ探索</h4><p>棚から該当カルテを発見</p></li>
+        <li><span class="n">04</span><h4>監査</h4><p>3点照合・押印</p></li>
+        <li><span class="n">05</span><h4>会計</h4><p>金額計算・次回予約</p></li>
+      </ol>
+      <div class="belt" aria-hidden="true"><span class="belt-fill"></span></div>
+      <p class="jam-note" id="jamNote" aria-live="polite">ライン稼働中</p>
     </div>
   </div>
 </section>
 
-<!-- DEPTH -->
-<section class="block" id="depth">
+<!-- ===== 受付体験デモ ===== -->
+<section class="block" id="demo">
   <div class="wrap">
-    <div class="eyebrow reveal">Beyond the Desk</div>
-    <h2 class="title reveal">受付だけじゃ、終わらない。</h2>
-    <p class="section-lead reveal">
-      稼いだ給料で設備投資、株・FX、カジノまで。選択と運命次第で、物語の結末は分岐する。
+    <p class="eyebrow">Try It</p>
+    <h2 class="title">ここまで読んだら、<span class="ink-red">1問だけ</span>やってみてください</h2>
+    <p class="section-lead">
+      本編の「監査」では、患者1人ごとに<b>カルテ・処方箋・保険証の3枚</b>が回ってきます。
+      あなたの仕事は、この3枚に<b>食い違いがないかを見つけること</b>。
+      問題なければ押印して会計へ、食い違いがあれば差し戻します。下はその簡略版です。
     </p>
+
+    <ol class="how">
+      <li><span class="how-n">1</span><p><b>3枚の氏名</b>を見比べる。1枚でも違う名前なら、別人の書類が混ざっている。</p></li>
+      <li><span class="how-n">2</span><p><b>カルテの通院理由</b>と<b>処方薬の適応</b>を見比べる。噛み合っていなければ処方ミス。</p></li>
+      <li><span class="how-n">3</span><p>どちらも問題なければ<b>押印</b>。1つでも引っかかれば<b>差し戻し</b>。</p></li>
+    </ol>
+
+    <div class="demo" id="demoRoot">
+      <p class="demo-q">この3枚に、食い違いはありますか？</p>
+      <div class="demo-desk">
+        <article class="doc doc-chart">
+          <p class="doc-tag">カルテ</p>
+          <dl>
+            <dt>患者ID</dt><dd data-f="chartId">—</dd>
+            <dt>氏名</dt><dd data-f="chartName">—</dd>
+            <dt>既往・通院</dt><dd data-f="chartDx">—</dd>
+          </dl>
+        </article>
+        <article class="doc doc-rx">
+          <p class="doc-tag">処方箋</p>
+          <dl>
+            <dt>氏名</dt><dd data-f="rxName">—</dd>
+            <dt>処方薬</dt><dd data-f="rxDrug">—</dd>
+            <dt>適応</dt><dd data-f="rxFor">—</dd>
+          </dl>
+        </article>
+        <article class="doc doc-ins">
+          <p class="doc-tag">保険証</p>
+          <dl>
+            <dt>氏名</dt><dd data-f="insName">—</dd>
+            <dt>記号・番号</dt><dd data-f="insNo">—</dd>
+            <dt>種別</dt><dd data-f="insKind">—</dd>
+          </dl>
+        </article>
+      </div>
+
+      <div class="demo-ctrl">
+        <div class="demo-meta">
+          <p>第 <b id="demoTurn">1</b> / 3 問</p>
+          <p class="demo-risk">クビのリスク <b id="demoRisk">0</b></p>
+        </div>
+        <div class="demo-buttons">
+          <button type="button" class="btn btn-stamp" data-act="ok">食い違いなし → 押印する</button>
+          <button type="button" class="btn btn-outline" data-act="ng">食い違いあり → 差し戻す</button>
+        </div>
+        <p class="demo-msg" id="demoMsg" aria-live="polite">氏名3枚と、通院理由・適応の噛み合いを確認してください。</p>
+        <button type="button" class="btn btn-ghost demo-restart" id="demoRestart" hidden>もう一度</button>
+      </div>
+    </div>
+    <p class="fineprint">※ 薬剤名・適応はすべて架空のものです。実在の医薬品とは関係ありません。</p>
+  </div>
+</section>
+
+<!-- ===== やり込み ===== -->
+<section class="block band" id="depth">
+  <div class="wrap">
+    <p class="eyebrow">Beyond the Desk</p>
+    <h2 class="title">受付だけじゃ、終わらない。</h2>
+    <p class="section-lead">
+      このゲームの本体は、<b>1日ごとの選択</b>です。カレンダーが進み、自宅の画面で「今日は何をするか」を選ぶ。
+      出勤して稼ぐか、休むか、増やしにいくか。その積み重ねが、契約満了までの残り日数を削っていきます。
+    </p>
+
+    <div class="hub reveal">
+      <figure class="hub-shot">
+        <img src="assets/img/shots/home.webp" alt="自宅の画面。日付・所持金・CP・DX化導入度・クビのリスクが並び、行動を選ぶカードが表示されている" width="1440" height="810" decoding="async">
+        <figcaption>すべての起点になる自宅の画面。上段のメーターが、あなたの立場そのもの。</figcaption>
+      </figure>
+      <ul class="hub-list">
+        <li><b>バイトに行く</b><span>病院で受付業務。CPと給料を稼ぐ、唯一の手段。</span></li>
+        <li><b>休む / 別バイト</b><span>1日を消費して体勢を立て直す。ただし出勤日に休めば欠勤扱い。</span></li>
+        <li><b>投資</b><span>株・FX。日数を消費せずに資産だけを動かせる。</span></li>
+        <li><b>カジノ</b><span>バカラとポーカー。1日を賭けて、一気に増やすか溶かすか。</span></li>
+        <li><b>ショップ</b><span>稼いだCPで設備とDX機材を導入し、病院そのものを改善する。</span></li>
+      </ul>
+    </div>
+
     <div class="stats">
-      <div class="stat reveal"><div class="num">7</div><div class="lbl">業務シーン</div></div>
-      <div class="stat reveal"><div class="num">複数</div><div class="lbl">エンディング分岐</div></div>
-      <div class="stat reveal"><div class="num">株/FX</div><div class="lbl">投資・資産運用</div></div>
-      <div class="stat reveal"><div class="num">カジノ</div><div class="lbl">ポーカー等ミニゲーム</div></div>
+      <div class="stat reveal"><span class="num">123日</span><span class="lbl">契約満了までの日数</span></div>
+      <div class="stat reveal"><span class="num">毎月</span><span class="lbl">CPノルマの査定</span></div>
+      <div class="stat reveal"><span class="num">12</span><span class="lbl">エンディング</span></div>
+      <div class="stat reveal"><span class="num">48</span><span class="lbl">実績・称号</span></div>
     </div>
-    <div class="grid" style="margin-top:24px">
-      <div class="card reveal"><div class="ico">📈</div><h3>投資システム</h3><p>現物株のファンダメンタルズ勝負とリアルタイムFX相場。給料を元手に資産を殖やせ——あるいは溶かせ。</p></div>
-      <div class="card reveal"><div class="ico">🎰</div><h3>カジノ＆ポーカー</h3><p>ディーラーと対戦するポーカーをはじめ、一攫千金のミニゲーム。勝てば潤い、負ければ地獄。</p></div>
-      <div class="card reveal"><div class="ico">📖</div><h3>分岐エンディング</h3><p>働き方と選択が結末を変える。最終日に待つ特殊エンディングと、実績・称号のコンプリート要素。</p></div>
+
+    <div class="feats">
+      <article class="feat reveal">
+        <img src="assets/img/shots/dx.webp" alt="DX機材の一覧画面。WEB問診票・マイナンバーカード導入・OCR読取などが並び、それぞれにクビのリスクと患者満足度の増減が表示されている" width="1440" height="810" decoding="async">
+        <div class="feat-txt">
+          <h3>DX化 ―― 効率化には、代償がある</h3>
+          <p>
+            電子カルテ、OCR読取、マイナ保険証、自動スケジューラー。導入すれば受付業務そのものが楽になります。
+            ただし導入直後は患者が慣れず、<b>クビのリスクが上がる</b>。しかも中には、見かけ倒しで効果の伸びない機材も紛れています。
+          </p>
+        </div>
+      </article>
+      <article class="feat reveal feat-rev">
+        <img src="assets/img/shots/stock.webp" alt="株式取引の画面。ローソク足チャートの右に、好材料と悪材料が並んだファンダメンタル分析パネルが表示されている" width="1440" height="810" decoding="async">
+        <div class="feat-txt">
+          <h3>投資 ―― 給料を、働かせる</h3>
+          <p>
+            現物株は、チャートではなく<b>企業の材料</b>で選びます。好材料と悪材料を読み比べ、噛み合う銘柄を探す。
+            FXはリアルタイムに動く相場を相手取ります。日数を消費しないぶん、深追いも自由です。
+          </p>
+        </div>
+      </article>
+      <article class="feat reveal">
+        <img src="assets/img/shots/poker.webp" alt="ポーカーの画面。ディーラーと自分の手札が並び、左に役の一覧が表示されている" width="1440" height="810" decoding="async">
+        <div class="feat-txt">
+          <h3>カジノ ―― 1日を賭ける</h3>
+          <p>
+            2択のバカラと、ディーラーとの読み合いになるポーカー。カジノに行けば<b>丸1日が消えます</b>。
+            負けた翌朝、残り日数だけが減っている——その手触りごと味わってください。
+          </p>
+        </div>
+      </article>
+      <article class="feat reveal feat-rev">
+        <img src="assets/img/shots/review.webp" alt="月次査定の結果画面。ノルマ150ptに対して累計CP290ptで「合格」と表示されている" width="1440" height="810" decoding="async">
+        <div class="feat-txt">
+          <h3>月次査定 ―― 毎月、値踏みされる</h3>
+          <p>
+            月末ごとにCPのノルマが課され、届かなければ査定不合格。
+            連続欠勤、クビのリスク、クレジットの使いすぎ。行き着く先はそれぞれ別のエンディングです。
+          </p>
+        </div>
+      </article>
     </div>
   </div>
 </section>
 
-<!-- SCREENSHOTS -->
-<section class="block" id="shots" style="background:var(--bg2);border-top:1px solid var(--panel-line);border-bottom:1px solid var(--panel-line)">
+<!-- ===== 実績ウォール ===== -->
+<section class="block" id="records">
   <div class="wrap">
-    <div class="eyebrow reveal">Screenshots</div>
-    <h2 class="title reveal">スクリーンショット</h2>
-    <p class="section-lead reveal">実際のゲーム画面（近日追加）。</p>
-    <div class="shots">
-      <div class="shot reveal">受付シーン<br>（画像を差し替え）</div>
-      <div class="shot reveal">カルテ保管室<br>（画像を差し替え）</div>
-      <div class="shot reveal">会計シーン<br>（画像を差し替え）</div>
-      <div class="shot reveal">監査・3点照合<br>（画像を差し替え）</div>
-      <div class="shot reveal">リザルト評価<br>（画像を差し替え）</div>
-      <div class="shot reveal">投資・カジノ<br>（画像を差し替え）</div>
-    </div>
+    <p class="eyebrow">Achievements</p>
+    <h2 class="title">まだ知らない、<span class="ink-red">48</span> の記録と結末</h2>
+    <p class="section-lead">
+      実績27種・エンディング12種・称号9種。エンディング系はネタバレを避けて伏せてあります。
+      スクロールすると、いくつかが解除されます。
+    </p>
+    <div class="ach-wall" id="achWall"></div>
+    <p class="fineprint">※ Steam実績として登録されるのは、このうち一部です。</p>
   </div>
 </section>
 
-<!-- BUY / FINAL CTA -->
+<!-- ===== スクリーンショット ===== -->
+<section class="block band" id="shots">
+  <div class="wrap">
+    <p class="eyebrow">Screenshots</p>
+    <h2 class="title">スクリーンショット</h2>
+    <p class="section-lead">実際のゲーム画面です。クリックで拡大します。</p>
+    <div class="shots" id="shots">
+      <figure class="shot">
+        <img src="assets/img/shots/home@sm.webp" data-full="assets/img/shots/home.webp" alt="自宅の画面。行動を選ぶカードが並んでいる" width="720" height="405" loading="lazy" decoding="async">
+        <figcaption>自宅 ―― 今日の行動を選ぶ</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/img/shots/shop@sm.webp" data-full="assets/img/shots/shop.webp" alt="改善提案ショップの画面" width="720" height="405" loading="lazy" decoding="async">
+        <figcaption>改善提案ショップ</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/img/shots/dx@sm.webp" data-full="assets/img/shots/dx.webp" alt="DX機材の一覧画面" width="720" height="405" loading="lazy" decoding="async">
+        <figcaption>DX機材の導入</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/img/shots/stock@sm.webp" data-full="assets/img/shots/stock.webp" alt="株式取引の画面" width="720" height="405" loading="lazy" decoding="async">
+        <figcaption>株式取引（現物）</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/img/shots/casino@sm.webp" data-full="assets/img/shots/casino.webp" alt="ナイトカジノの受付画面" width="720" height="405" loading="lazy" decoding="async">
+        <figcaption>ナイトカジノ</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/img/shots/baccarat@sm.webp" data-full="assets/img/shots/baccarat.webp" alt="バカラの画面" width="720" height="405" loading="lazy" decoding="async">
+        <figcaption>バカラ</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/img/shots/poker@sm.webp" data-full="assets/img/shots/poker.webp" alt="ポーカーの画面" width="720" height="405" loading="lazy" decoding="async">
+        <figcaption>ポーカー</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/img/shots/review@sm.webp" data-full="assets/img/shots/review.webp" alt="月次査定の結果画面" width="720" height="405" loading="lazy" decoding="async">
+        <figcaption>月次査定</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/img/shots/novel@sm.webp" data-full="assets/img/shots/novel.webp" alt="会話パートの画面。選択肢が表示されている" width="720" height="405" loading="lazy" decoding="async">
+        <figcaption>会話パート</figcaption>
+      </figure>
+    </div>
+    <p class="fineprint">※ 受付・カルテ探索・監査・会計の業務画面は、準備でき次第このページに追加します。</p>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
 <section class="block final" id="buy">
   <div class="wrap">
-    <div class="eyebrow reveal">Get the Game</div>
-    <h2 class="title reveal">今日も、クビを回避せよ。</h2>
-    <p class="section-lead reveal" style="margin-left:auto;margin-right:auto">
-      Steamにて配信予定。ウィッシュリスト登録で公開をお見逃しなく。
-    </p>
-    <div class="cta-row reveal">
-      <a class="btn btn-steam" href="https://store.steampowered.com/app/4334400/" target="_blank" rel="noopener">
-        ▶ Steamでウィッシュリスト <span class="coming">（近日公開）</span>
+    <p class="eyebrow">Get the Game</p>
+    <h2 class="title">今日も、クビを回避せよ。</h2>
+    <p class="section-lead center">Steamにて配信。ウィッシュリスト登録で、更新をお見逃しなく。</p>
+    <div class="cta-row center">
+      <a class="btn btn-stamp btn-lg" href="https://store.steampowered.com/app/4334400/" target="_blank" rel="noopener">
+        Steamでウィッシュリスト
       </a>
     </div>
   </div>
@@ -321,24 +364,32 @@
 
 <footer>
   <div class="wrap foot">
-    <div>© <span id="yr"></span> SaiKa工房 — クビを回避せよ！！ ～病院受付シミュレーション～</div>
-    <div style="display:flex;gap:18px">
-      <a href="#features">特徴</a>
-      <a href="#buy">Steam</a>
-    </div>
+    <p class="foot-brand">
+      <img src="assets/img/saika_mark.webp" alt="" width="28" height="28">
+      © <span id="yr">2026</span> SaiKa工房 — クビを回避せよ！！ ～病院受付シミュレーション～
+    </p>
+    <nav class="foot-links">
+      <a href="#chart">症状</a>
+      <a href="#demo">受付体験</a>
+      <a href="https://store.steampowered.com/app/4334400/" target="_blank" rel="noopener">Steam</a>
+    </nav>
   </div>
 </footer>
 
-<script>
-  document.getElementById('yr').textContent = new Date().getFullYear();
-  // Scroll reveal
-  const io = new IntersectionObserver((entries)=>{
-    entries.forEach((e,i)=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
-  },{threshold:.12});
-  document.querySelectorAll('.reveal').forEach((el,i)=>{
-    el.style.transitionDelay=(Math.min(i%6,5)*60)+'ms';
-    io.observe(el);
-  });
-</script>
+<!-- 案内役 -->
+<aside class="guide" id="guide" hidden>
+  <div class="guide-balloon" id="guideBalloon"></div>
+  <img class="guide-img" id="guideImg" src="assets/img/suggestion/01_normal.webp" alt="受付課の案内役" width="200" height="560">
+</aside>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="スクリーンショットの拡大表示">
+  <button type="button" class="lightbox-close" id="lightboxClose" aria-label="閉じる">×</button>
+  <figure>
+    <img id="lightboxImg" src="" alt="">
+    <figcaption class="lightbox-cap" id="lightboxCap"></figcaption>
+  </figure>
+</div>
+
+<script src="assets/js/site.js" defer></script>
 </body>
 </html>
